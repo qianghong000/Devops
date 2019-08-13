@@ -1,0 +1,37 @@
+<!-- 引用：子页面继承母模板 -->
+{% extends "base.html" %}
+
+<!-- 定义标题 -->
+{% block title %} 用户权限管理系统 {% endblock %}
+
+<!-- 块级：面包屑导航部分 -->
+{% block breadcrunb %}
+    <h2>用户展示</h2>
+<!-- 块级结束标志  -->
+{% endblock %}
+
+{% block content %}
+    <table class="table table-striped table-hover table-bordered">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>用户名</th>
+        <th>姓名</th>
+        <th>年龄</th>
+    </tr>
+    </thead>
+    <tbody>
+<!--循环获取 views-old.py 返回的{'users':users}数据-->
+    {% for user in users %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.name_cn }}</td>
+        <td>{{ user.age }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% endblock %}
+
+

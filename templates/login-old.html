@@ -1,0 +1,25 @@
+<form action="{% url 'users:login' %}" method="post">
+      <!--用户名-->
+      <div class="form-group has-feedback">
+        <input name="username" type="text" class="form-control" placeholder="用户名">
+        {% if forms.username.errors %}
+            <span  style="color:red">{{ forms.username.errors }}</span>
+        {% endif %}
+      </div>
+      <!--密码-->
+      <div class="form-group has-feedback">
+        <input name="password" type="password" class="form-control" placeholder="密码">
+        {% if forms.password.errors %}
+            <span  style="color:red">{{ forms.password.errors }}
+      </div></span>
+        {% endif %}
+      <!--错误信息及登陆-->
+      <div class="row">
+        <div class="col-xs-8">
+            <span id="errors" style="color:red">{% if data %} {{ data }} {% else %}  {% endif %}</span>
+        </div>
+        <div class="col-xs-4">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
+        </div>
+      </div>
+    </form>

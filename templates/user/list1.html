@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}
+    用户展示
+{% endblock %}
+
+{% block breadcrunb %}
+    <h2>用户展示</h2>
+{% endblock %}
+
+{% block content %}
+    <table class="table table-striped table-hover table-bordered">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>用户名</th>
+        <th>姓名</th>
+        <th>手机号</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.name_cn }}</td>
+        <td>{{ user.phone }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% endblock %}
