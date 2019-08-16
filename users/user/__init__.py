@@ -37,22 +37,26 @@ def userlist(request):
 # 第三天：类 更简洁的方式
 # ListView 主要用在获取某个models的所有数据
 class UserListView(LoginRequiredMixin, PaginationMixin, ListView):
-    model = UserProfile  #(此属性是必须的)指定了数据表。他的功能相当于取出了UserProfile 中所有数据。
-    # template_name = "user/userlist.html"
-    template_name = "user/user_list.html"
-    context_object_name = "userlist"    # 传递的变量
-    paginate_by = 3
-    keyword = ''
-    login_url = '/login/'
+    def __init__(self):
+        self.model = UserProfile  #(此属性是必须的)指定了数据表。他的功能相当于取出了UserProfile 中所有数据。
+        # self.template_name = "user/userlist.html"
+        self.template_name = "user/user_list.html"
+        self.context_object_name = "userlist"    # 传递的变量
+        self.paginate_by = 3
+        self.keyword = ''
+        self.login_url = '/login/'
 
-    def get_queryset(self):         # 继承父类
+    def get_queryset(self):  # 继承父类
         # 变量属性见图（应用场景：列表页）
         queryset = super(UserListView, self).get_queryset()
+        #print(self.request.GET)    #<QueryDict: {'keyword': ['admin']}>
         self.keyword = self.request.GET.get('keyword', '').strip()
         if self.keyword:
+            # 查询条件为name_cn|username|phone的查询结果。icontains（大小写不敏感）
             queryset = queryset.filter(Q(name_cn__icontains=self.keyword)|
                                     Q(username__icontains=self.keyword) |
                                        Q(phone__icontains=self.keyword))
+        #print(queryset)     # <QuerySet [<UserProfile: admin>]>
         # 后端将 queryset 传递给前端
         return queryset
 
@@ -91,7 +95,6 @@ class UserListView(LoginRequiredMixin, PaginationMixin, ListView):
             if _userForm.errors.get('username'):
                 print(_userForm.errors['username'][0])   # 已存在一位使用该名字的用户
             res = {'code': 1, 'errmsg': _userForm.errors.as_json()}
-
         return JsonResponse(res, safe=True)
 
     """
@@ -177,7 +180,7 @@ class UserGroupPowerView(LoginRequiredMixin, DetailView):
         context = super(UserGroupPowerView, self).get_context_data(**kwargs)
         context['user_has_groups'], context['user_has_permissions'] = self._get_user_group_power()
         context['user_not_groups'], context['user_not_permissions'] = self._get_user_not_group_power()
-        return context
+        return context   #{'object': <UserProfile: admin>, 'user': <UserProfile: admin>, 'view': <users.user.UserGroupPowerView object at 0x1097a3a20>, 'user_has_groups': <QuerySet [<Group: admin>]>, 'user_has_permissions': <QuerySet []>, 'user_not_groups': [<Group: test1>, <Group: test2>, <Group: test3>, <Group: test4>, <Group: test5>, <Group: test6>], 'user_not_permissions': [<Permission: admin | 日志记录 | Can add log entry>, <Permission: admin | 日志记录 | Can change log entry>, <Permission: admin | 日志记录 | Can delete log entry>, <Permission: admin | 日志记录 | Can view log entry>, <Permission: auth | 组 | Can add group>, <Permission: auth | 组 | Can change group>, <Permission: auth | 组 | Can delete group>, <Permission: auth | 组 | Can view group>, <Permission: auth | 权限 | Can add permission>, <Permission: auth | 权限 | Can change permission>, <Permission: auth | 权限 | Can delete permission>, <Permission: auth | 权限 | Can view permission>, <Permission: contenttypes | 内容类型 | Can add content type>, <Permission: contenttypes | 内容类型 | Can change content type>, <Permission: contenttypes | 内容类型 | Can delete content type>, <Permission: contenttypes | 内容类型 | Can view content type>, <Permission: sessions | 会话 | Can add session>, <Permission: sessions | 会话 | Can change session>, <Permission: sessions | 会话 | Can delete session>, <Permission: sessions | 会话 | Can view session>, <Permission: users | 用户信息 | Can add 用户信息>, <Permission: users | 用户信息 | Can change 用户信息>, <Permission: users | 用户信息 | Can delete 用户信息>, <Permission: users | 用户信息 | Can view 用户信息>]}
 
     # 获取当前用户所有组、权限以列表形式返回
     def _get_user_group_power(self):
@@ -214,5 +217,8 @@ class UserGroupPowerView(LoginRequiredMixin, DetailView):
             res = {'code': 1, 'next_url': reverse("users:user_list"), 'errmsg': '用户角色权限更新失败'}
             #logger.error("edit  user group pwoer error: %s" % traceback.format_exc())
         return render(request, settings.JUMP_PAGE, res)
+
+
+
 
 
