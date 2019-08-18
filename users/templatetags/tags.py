@@ -7,6 +7,7 @@
 注意目录结构；
 """
 
+import re
 from django import template
 register = template.Library()
 
@@ -60,10 +61,21 @@ def userlist_str2(user_list):
 # 友好的展示权限
 @register.filter(name='perm_str2')
 def perm_str2(perm_list):
+    ll_perm = []
+    for perm in perm_list:
+        # 以字符串'|'分割 ;re.M多行匹配，影响 ^ 和 $ ;re.I使匹配对大小写不敏感
+        SplitObj = re.split('\s[|+]\s', str(perm), re.M | re.I)
+        if SplitObj[2]:
+            # 将空格替换为'_'
+            SubObj = re.sub(r'\s+', "_", SplitObj[2])
+            ll_perm.append(SubObj)
+
     if len(perm_list) < 3:
-        return ' '.join([str(perm) for perm in perm_list])
+        return ' '.join(ll_perm)
     else:
-        return '%s ...' % ' '.join([str(perm) for perm in perm_list[0:2]])
+        # return '%s ...' % ' '.join([str(perm) for perm in perm_list[0:2]])
+        return '%s ...' % ' '.join(ll_perm[0:2])
+
 
 
 
