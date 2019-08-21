@@ -147,7 +147,7 @@
             <li><a href="{% url 'users:group_list' %}"><i class="fa fa-circle-o"></i> 角色管理</a></li>
             <li><a href="{% url 'users:power_list' %}"><i class="fa fa-circle-o"></i> 权限管理</a></li>
         {% else %}
-            <li><a href="{% url 'users:user_detail' request.user.id %}"><i class="fa fa-circle-o"></i>个人中心</a></li>
+            <li><a href="{% url 'users:user_detail' request.user.id % users:logout}"><i class="fa fa-circle-o"></i>个人中心</a></li>
         {% endif %}
       </ul>
     </li>
@@ -194,9 +194,9 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="{#% url 'workorder:apply' %#}"><i class="fa fa-circle-o"></i> 工单申请</a></li>
-        <li><a href="{#% url 'workorder:list' %#}"><i class="fa fa-circle-o"></i> 工单列表</a></li>
-        <li><a href="{#% url 'workorder:history' %#}"><i class="fa fa-circle-o"></i> 工单历史</a></li>
+        <li><a href="{% url 'workorder:apply' %}"><i class="fa fa-circle-o"></i> 工单申请</a></li>
+        <li><a href="{% url 'workorder:list' %}"><i class="fa fa-circle-o"></i> 工单列表</a></li>
+        <li><a href="{% url 'workorder:history' %}"><i class="fa fa-circle-o"></i> 工单历史</a></li>
       </ul>
     </li>
 

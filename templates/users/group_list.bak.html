@@ -74,19 +74,20 @@
             </tr>
             </thead>
             <tbody>
-             {% for group in grouplist %}
-               <tr class="gradeX">
-<!--              # group_str2 为templatetags.tags 下创建的过滤器函数名；更友善的显示组名-->
-                  <td class="text-center"> {{ group.name }} </td>
-                  <td class="text-center"> {{ group.user_set.all | userlist_str2 | default:"None" }} </td>
-                  <td class="text-center"> {{ group.permissions.all | perm_str2 | default:"None" }} </td>
-                  <td class="text-center">
-                    <div class="btn-group">
-                     <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="false">更新</span></button>
-                    </div>
-                    <a class="btn btn-danger btn-sm del" data-id="{{ user.id }}" {% if user.username == 'admin' %} disabled {% endif %}>删除</a>
-                   </td>
-               </tr>
+            {% for group in grouplist %}
+            <tr class="gradeX">
+                <td class="text-center">{{ group.name }}</td>
+<!--            # userlist_str2 为templatetags.tags 下创建的过滤器函数名；更友善的显示组名-->
+                <td class="text-center"> {{ group.user_set.all | userlist_str2| default:'无' }}
+<!--            # 右侧更多选项按钮-->
+                <a class="btn btn-xs btn-info more" gid="{{group.id}}" gname="{{group.name}}">更多</a>
+                </td>
+                <td class="text-center"> {{ group.permissions.all | perm_str2 | default:'无'  }} </td>
+                <td class="text-center">
+                     <a class="btn btn-xs btn-primary" href="{#% url 'users:role_detail' group.id %#}">更新</a>
+                     <a href="#" class="btn btn-xs btn-danger delete" data-id = {{ group.id }} >删除</a>
+                </td>
+            </tr>
             {% endfor %}
             </tbody>
         </table>

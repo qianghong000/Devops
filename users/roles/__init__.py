@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # author: qsh
+# 角色管理页面
 
 from django.http import  HttpResponseRedirect, JsonResponse, QueryDict, Http404
 # 权限&&认证
@@ -25,17 +26,17 @@ def grouplist(request):
     groups = Group.objects.all()
     # users = UserProfile.objects.all().values('id', 'username', 'name_cn', 'phone')
     print(groups, type(groups))
-    return render(request, 'user/usergroup_list.html', {'grouplist': groups})
+    return render(request, 'users/roles/usergroup_list.html', {'grouplist': groups})
 
 # 角色管理列表
 class GroupListView(LoginRequiredMixin, PaginationMixin, ListView):
     model = Group  #(此属性是必须的)指定了数据表。他的功能相当于取出了Group 中所有数据。
     # template_name = "user/userlist.html"
-    template_name = "user/usergroup_list.html"
+    template_name = "users/roles/group_list.html"
     context_object_name = "grouplist"    # 往前端传递的变量
-    paginate_by = 3
+    paginate_by = 5
     keyword = ''
-    login_url = '/login/'
+    login_url = '/login/'  # 用户没有通过或者权限不够时跳转的地址，默认是 settings.LOGIN_URL.
 
     def get_queryset(self):  # 继承父类 ListView(BaseListView)，查询字段
         # 变量属性见图（应用场景：列表页）
@@ -45,8 +46,24 @@ class GroupListView(LoginRequiredMixin, PaginationMixin, ListView):
             queryset = queryset.filter(name__icontains = self.keyword)
         # 后端将 queryset 传递给前端
         return queryset
+    '''
+    # 第一种方式通过后端获取权限和用户数据
+    def get_context_data(self, **kwargs):
+        context = super(RoleListView, self).get_context_data(**kwargs)
+        context['keyword'] = self.keyword
+        rolelist = []
+        for role in context["object_list"]:
+            role_info = {}
+            role_info['id'] = role.id
+            role_info['name'] = role.name
+            role_info['member'] = role.user_set.all()
+            role_info['permissions'] = role.permissions.all()
+            rolelist.append(role_info)
+        context['rolelist'] = rolelist
+        return context
+    '''
 
-    # 效果见图1
+    # 第二种方式：交给前端获取数据去处理
     def get_context_data(self, **kwargs):   # 继承父类 ListView(BaseListView)，把数据返回给上下文
         context = super(GroupListView,self).get_context_data(**kwargs)
         context['keyword'] = self.keyword
@@ -85,29 +102,52 @@ class GroupListView(LoginRequiredMixin, PaginationMixin, ListView):
             res = {'code': 1, 'errmsg': _userForm.errors.as_json()}
         return JsonResponse(res, safe=True)
 
-# 权限管理列表
-class PowerListView(LoginRequiredMixin, PaginationMixin, ListView):
-    model = Permission  #(此属性是必须的)指定了数据表。他的功能相当于取出了Group 中所有数据。
-    template_name = "user/power_list.html"
-    context_object_name = "powerlist"    # 往前端传递的变量
-    paginate_by = 3
-    keyword = ''
-    login_url = '/login/'
+    #删除用户
+    def delete(self, request):
+        data = QueryDict(request.body).dict()
+        print(data)
+        pk = data.get('id')
+        try:
+            user = self.model.objects.filter(pk=pk)
+            user.delete()
+            res = {'code': 0, 'result': '删除用户成功'}
+        except:
+            # logger.error("delete user  error: %s" % traceback.format_exc())
+            res = {'code': 1, 'errmsg': '删除用户失败'}
+        return JsonResponse(res, safe=True)
 
-    def get_queryset(self):  # 继承父类 ListView(BaseListView)，查询字段
-        # 变量属性见图（应用场景：列表页）
-        queryset = super(PowerListView, self).get_queryset()
-        self.keyword = self.request.GET.get('keyword', '')
-        if self.keyword:
-            queryset = queryset.filter(name__icontains = self.keyword)
-        # 后端将 queryset 传递给前端
-        return queryset
+class GroupDetailView(LoginRequiredMixin, DetailView):
+    """
+    用户详情
+    """
+    model = UserProfile  # object =  UserProfile.objects.filter(pk=pk)
+    template_name = "users/roles/group_edit.html"
+    context_object_name = "user"  # user = object
 
-    # 效果见图1
-    def get_context_data(self, **kwargs):   # 继承父类 ListView(BaseListView)，把数据返回给上下文
-        context = super(PowerListView,self).get_context_data(**kwargs)
-        context['keyword'] = self.keyword
-        # print(context)  #{'paginator': <pure_pagination.paginator.Paginator object at 0x10f377f60>, 'page_obj': <Page 1 of 3>, 'is_paginated': True, 'object_list': <QuerySet [<Group: admin>, <Group: test1>, <Group: test2>]>, 'grouplist': <QuerySet [<Group: admin>, <Group: test1>, <Group: test2>]>, 'view': <users.roles.GroupListView object at 0x10f2a0e80>, 'keyword': ''}
-        #print(self.model)
-        return context
+    """
+    更新用户信息
+    """
+
+    def post(self, request, **kwargs):
+        print(
+            request.POST)  # <QueryDict: {'id': ['7'], 'username': ['aa'], 'name_cn': ['bb'], 'phone': ['13305779168']}>
+        print(kwargs)  # {'pk': '7'}
+        print(request.body)  # b'id=7&username=aa&name_cn=bb&phone=13305779168'
+        pk = kwargs.get("pk")
+        data = QueryDict(request.body).dict()
+        print(data)  # {'id': '7', 'username': 'aa', 'name_cn': 'bb', 'phone': '13305779168'}
+        _userForm = UserUpdateForm(request.POST)
+        if _userForm.is_valid():
+            try:
+                self.model.objects.filter(pk=pk).update(**data)
+                res = {'code': 0, "next_url": reverse("users:user_list"), 'result': '更新用户成功'}
+            except:
+                res = {'code': 1, "next_url": reverse("users:user_list"), 'errmsg': '更新用户失败'}
+                # logger.error("update user  error: %s" % traceback.format_exc())
+        else:
+            # 获取所有的表单错误
+            print(_userForm.errors)
+            res = {'code': 1, "next_url": reverse("users:user_list"), 'errmsg': _userForm.errors}
+        return render(request, settings.JUMP_PAGE, res)
+
 

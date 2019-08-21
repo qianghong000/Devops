@@ -3,7 +3,7 @@
 
 from django.urls import path, re_path
 from . import views_old,views1,views
-from . import views,user,roles
+from . import views,user,roles,power
 
 app_name = 'users'
 urlpatterns = [
@@ -15,9 +15,10 @@ urlpatterns = [
     path("list/", user.userlist, name='user_list'),
     path('userlist/', user.UserListView.as_view(), name = 'user_list'),
     path('grouplist/',roles.GroupListView.as_view(), name='group_list'),
-    path('powerlist/', roles.PowerListView.as_view(), name='power_list'),
+    path('powerlist/', power.PowerListView.as_view(), name='power_list'),
     # <pk> 既英语单词主键 <Primary key> --> 搜索索引(userid)
     re_path('userdetail/(?P<pk>[0-9]+)?/$', user.UserDetailView.as_view(), name='user_detail'),
+    re_path('groupdetail/(?P<pk>[0-9]+)?/$', roles.GroupDetailView.as_view(), name='role_detail'),
     path('modifypasswd/', user.ModifyPwdView.as_view(), name='modify_pwd'),
     re_path('usergrouppower/(?P<pk>[0-9]+)?/$', user.UserGroupPowerView.as_view(), name='user_group_power'),
     # http://ip:8000/logout/

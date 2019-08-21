@@ -25,7 +25,7 @@ SECRET_KEY = 'xl)qysa0^@3y=by!7fb1%lawl=cxppw32*_4rap@)*rq!@tl_o'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','192.168.164.83','192.168.162.184']
+ALLOWED_HOSTS = ['127.0.0.1','192.168.162.184','192.168.165.67']
 
 
 # Application definition
@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'hello.apps.HelloConfig',
-    'users.apps.UsersConfig',
+    'users.apps.UsersConfig',     # UsersConfig 为users.apps下的类名
+    'work_order.apps.WorkOrderConfig',
 ]
 
 MIDDLEWARE = [
@@ -145,6 +146,11 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR,'static'),
 )
+
+# 规定文件上传存放位置
+MEDIA_URL = '/media/'
+# 文件存储的位置例如model中定义的文件存储位置为 reboot/media/orderfiles/2019/06/aa.txt
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # 跳转中间页
 JUMP_PAGE = "jump.html"

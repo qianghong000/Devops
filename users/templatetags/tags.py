@@ -54,27 +54,31 @@ def userlist_str2(user_list):
     # print(ll)
 
     if len(user_list) < 3:
-        return ' '.join([str(user) for user in user_list])
+        # user为一个对象；name_cn为数据库userprofile_groups表中字段
+        return ' '.join([user.name_cn for user in user_list])
     else:
-        return '%s ...' % ' '.join([str(user) for user in user_list[0:2]])
+        return '%s ...' % ' '.join([user.name_cn for user in user_list[0:2]])
 
 # 友好的展示权限
 @register.filter(name='perm_str2')
 def perm_str2(perm_list):
-    ll_perm = []
-    for perm in perm_list:
-        # 以字符串'|'分割 ;re.M多行匹配，影响 ^ 和 $ ;re.I使匹配对大小写不敏感
-        SplitObj = re.split('\s[|+]\s', str(perm), re.M | re.I)
-        if SplitObj[2]:
-            # 将空格替换为'_'
-            SubObj = re.sub(r'\s+', "_", SplitObj[2])
-            ll_perm.append(SubObj)
+    # ll_perm = []
+    # for perm in perm_list:
+    #     print(perm.name)
+    #     # 以字符串'|'分割 ;re.M多行匹配，影响 ^ 和 $ ;re.I使匹配对大小写不敏感
+    #     SplitObj = re.split('\s[|+]\s', str(perm), re.M | re.I)
+    #     if SplitObj[2]:
+    #         # 将空格替换为'_'
+    #         SubObj = re.sub(r'\s+', "_", SplitObj[2])
+    #         ll_perm.append(SubObj)
+    #
 
+    #print(len(perm_list))
     if len(perm_list) < 3:
-        return ' '.join(ll_perm)
+        return ' '.join([perm.codename for perm in perm_list])   # codename为数据库auth_group 表中字段，见<图5：数据库中字段>
     else:
         # return '%s ...' % ' '.join([str(perm) for perm in perm_list[0:2]])
-        return '%s ...' % ' '.join(ll_perm[0:2])
+        return '%s ...' % ' '.join([perm.codename for perm in perm_list[0:2]])
 
 
 

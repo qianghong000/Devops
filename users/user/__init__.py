@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # author: qsh
+# 用户管理页面
 
 from django.http import  HttpResponseRedirect, JsonResponse, QueryDict, Http404
 from django.shortcuts import render
@@ -32,7 +33,7 @@ def userlist(request):
     users = UserProfile.objects.all()
     #users = UserProfile.objects.all().values('id', 'username', 'name_cn', 'phone')
     print(users,type(users))
-    return render(request,'user/list1.html',{'users':users})
+    return render(request,'users/user/list1.html',{'users':users})
 
 # 第三天：类 更简洁的方式
 # ListView 主要用在获取某个models的所有数据
@@ -40,13 +41,14 @@ class UserListView(LoginRequiredMixin, PaginationMixin, ListView):
     def __init__(self):
         self.model = UserProfile  #(此属性是必须的)指定了数据表。他的功能相当于取出了UserProfile 中所有数据。
         # self.template_name = "user/userlist.html"
-        self.template_name = "user/user_list.html"
+        self.template_name = "users/user/user_list.html"
         self.context_object_name = "userlist"    # 传递的变量
         self.paginate_by = 3    #  分页
         self.keyword = ''
-        self.login_url = '/login/' # 用户没有通过或者权限不够时跳转的地址，默认是 settings.LOGIN_URL.
+        # 用户没有通过或者权限不够时跳转的地址，默认是 settings.LOGIN_URL.
+        self.login_url = '/login/'
         # 把没通过检查的用户重定向到没有 "next page" 的非登录页面时，把它设置为 None ，这样它会在 URL 中移除。
-        self.redirect_field_name = 'redirect_to'
+        self.redirect_field_name = 'redirect_to'  # http://127.0.0.1:8000/login/?redirect_to=/
 
     def get_queryset(self):  # 继承父类
         # 变量属性见图（应用场景：列表页）
@@ -120,7 +122,7 @@ class UserDetailView(LoginRequiredMixin,DetailView):
     用户详情
     """
     model = UserProfile  # object =  UserProfile.objects.filter(pk=pk)
-    template_name = "user/user_edit.html"
+    template_name = "users/user/user_edit.html"
     context_object_name = "user"  # user = object
 
     """
@@ -153,27 +155,27 @@ class ModifyPwdView(LoginRequiredMixin,View):
     """
     def get(self,request):
         uid = request.GET.get('uid',None)
-        return render(request,'user/change_passwd.html',{'uid':uid})
+        return render(request,'users/user/change_passwd.html',{'uid':uid})
 
     def post(self,request):
         uid = request.POST.get('uid',None)
         pwd1 = request.POST.get('password1','')
         pwd2 = request.POST.get('password2','')
         if pwd1 != pwd2:
-            return render(request,"user/change_passwd.html",{"msg":"两次密码输入不一致！"})
+            return render(request,"users/user/change_passwd.html",{"msg":"两次密码输入不一致！"})
         try:
             user = UserProfile.objects.get(pk=uid)
             user.password = make_password(pwd1)
             user.save()
             return HttpResponseRedirect(reverse("users:index"))
         except:
-            return render(request,"user/change_passwd.html",{"msg":"密码修改失败！"})
+            return render(request,"users/user/change_passwd.html",{"msg":"密码修改失败！"})
 
 class UserGroupPowerView(LoginRequiredMixin, DetailView):
     """
     更新用户角色及权限
     """
-    template_name = 'user/user_group_power.html'
+    template_name = 'users/user/user_group_power.html'
     model = UserProfile
     context_object_name = 'user'
 

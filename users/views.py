@@ -59,12 +59,10 @@ class IndexView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'index.html')
 
-
 class LoginView(View):
     """
     登录模块
     """
-
     def get(self, request):
         return render(request, "login.html")
 
@@ -72,7 +70,6 @@ class LoginView(View):
         """
         登录模块
         """
-
     def get(self, request):
         return render(request, "login.html")
 
@@ -98,7 +95,6 @@ class LogoutView(View):
     """
     登出功能
     """
-
     def get(self, request):
         logout(request)
         return HttpResponseRedirect(reverse("users:login"))

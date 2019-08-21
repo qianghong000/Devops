@@ -29,7 +29,7 @@
 <div class="col-md-12">
 
 <!-- 引入添加模态窗 -->
-{% include "user/useraddmodel.html" %}
+{% include "users/user/useraddmodel.html" %}
 
 <!-- 表格内容 -->
 <div class="box box-info">
@@ -113,7 +113,7 @@
                  显示 [{{ paginator.count }}] 条数据中的 第 [{{ page_obj.start_index}}] 至 [{{ page_obj.end_index }}] 的数据
              </div>
           </div>
-          {% include 'user/paginator.html' %}
+          {% include 'paginator.html' %}
         </div><!-- /.paginator -->
 
         </div>
@@ -168,6 +168,7 @@ $("#submit_button").click(function(){
 
 /*删除用户*/
 $("tbody").on('click','.del',function(){
+    // # confirm函数用于提供确认功能，它首先显示给定的message参数所包含的信息，并提供两个可选择的回答“ok”和“cancel”，然后等待用户选择其中的一个。如果用户选择“ok”则返回true；否则，如若选择“cancel”则返回false
     if(confirm("是否确认删除？")){
         let that = this;
         let id = $(this).attr('data-id')
