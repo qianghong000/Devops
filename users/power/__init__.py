@@ -42,7 +42,7 @@ class PowerListView(LoginRequiredMixin, PaginationMixin, ListView):
     def get_context_data(self, **kwargs):   # 继承父类 ListView(BaseListView)，把数据返回给上下文
         context = super(PowerListView,self).get_context_data(**kwargs)
         context['keyword'] = self.keyword
-        # print(context)  #{'paginator': <pure_pagination.paginator.Paginator object at 0x10f377f60>, 'page_obj': <Page 1 of 3>, 'is_paginated': True, 'object_list': <QuerySet [<Group: admin>, <Group: test1>, <Group: test2>]>, 'grouplist': <QuerySet [<Group: admin>, <Group: test1>, <Group: test2>]>, 'view': <users.roles.GroupListView object at 0x10f2a0e80>, 'keyword': ''}
+        # print(context)  #{'paginator': <pure_pagination.paginator.Paginator object at 0x10f377f60>, 'page_obj': <Page 1 of 3>, 'is_paginated': True, 'object_list': <QuerySet [<Group: admin>, <Group: test1>, <Group: test2>]>, 'grouplist': <QuerySet [<Group: admin>, <Group: test1>, <Group: test2>]>, 'view': <users.group.GroupListView object at 0x10f2a0e80>, 'keyword': ''}
         #print(self.model)
         return context
 

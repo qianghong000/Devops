@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'hello.apps.HelloConfig',
     'users.apps.UsersConfig',     # UsersConfig 为users.apps下的类名
     'work_order.apps.WorkOrderConfig',
+    'deploy.apps.DeployConfig',
 ]
 
 MIDDLEWARE = [
@@ -138,6 +139,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
+
+# GITLAB
+GITLAB_HTTP_URI = "http://123.56.73.115"
+GITLAB_TOKEN = "4iBGCWuTtG2Q6VQ5yBYD"
 
 # 静态文件存放位置
 STATIC_URL = '/static/'

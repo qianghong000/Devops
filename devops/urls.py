@@ -22,6 +22,7 @@ urlpatterns = [
     #访问根路径走 users.urls 路由规则
     path('', include('users.urls')),
     path("workorder/", include('work_order.urls')),
+    path("deploy/", include('deploy.urls')),
     re_path("media/(?P<path>.*)", serve, {"document_root": MEDIA_ROOT}),
     #path('', include('users.urls1')),
     path('admin/', admin.site.urls),
